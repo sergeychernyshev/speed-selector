@@ -13,7 +13,8 @@ http://www.webpagetest.org/xmlResult/160301_W9_165/
 var selectors = [
    '#photo img',
    '#title',
-   '.page div:nth-child(4)'
+   '.section:nth-child(4)',
+   '.section a:nth-child(2) img'
 ];
 
 var viewport_width = document.documentElement.clientWidth;
