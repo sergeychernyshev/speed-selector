@@ -43,10 +43,10 @@ $scale = ($image_width - $scrollbar_width) / $viewport_width;
 $boundaries = preg_replace('|</selector-boundaries>.*$|s', '', $image_info[1]);
 $boundaries = explode(';', rtrim($boundaries, ';'));
 
-$boundaries = array_splice($boundaries, 2, 1); # just one box for debugging
+#$boundaries = array_splice($boundaries, 2, 1); # just one box for debugging
 
 #$boundaries = array("0,0,1280,1024"); # debugging override
-var_export($boundaries);
+#var_export($boundaries);
 
 $boundaries = array_map(function ($box) {
   global $viewport_width, $scale, $image_width, $image_height, $scrollbar_width;
@@ -65,7 +65,7 @@ $boundaries = array_map(function ($box) {
   );
 }, $boundaries);
 
-var_export($boundaries);
+#var_export($boundaries);
 
 foreach ($boundaries as $b) {
   $w = $b[0];
