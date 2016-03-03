@@ -39,9 +39,15 @@ ${REFERENCE}:
 mask: ${TEST_FOLDER}/result.xml ${REFERENCE} ${TEST_FOLDER}/video.mp4
 	php create_mask.php ${REFERENCE} ${FRAMES_FOLDER}/${FRAME_FILE} ${XMLRESULT} ${MASK}
 
-frame:
+FRAMES := $(wildcard ${FRAMES_FOLDER}/*)
+MASKED_FRAMES := $(addprefix ${MASKED_FOLDER}/,$(notdir ${FRAMES}))
+
+frames:
 	mkdir -p ${MASKED_FOLDER}
-	composite ${MASK} ${FRAMES_FOLDER}/${FRAME_FILE} ${MASKED_FOLDER}/${FRAME_FILE}
+	${MAKE} ${MASKED_FRAMES}
+
+${MASKED_FOLDER}/%: ${FRAMES_FOLDER}/%
+	composite ${MASK} $< $@
 
 clean:
 	rm -rf ${FRAMES_FOLDER} ${MASK} ${MASKED_FOLDER}
