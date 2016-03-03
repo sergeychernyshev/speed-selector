@@ -29,12 +29,12 @@ $image_right = $image_width + $image_left;
 $image_bottom = $image_height + $image_top;
 
 # draw full frame video mask (to be substracted from later)
-$command .= " -fill yellow -draw 'rectangle ${image_left},${image_top} ${image_right},${image_bottom}' ";
+$command .= " -fill white -draw 'rectangle ${image_left},${image_top} ${image_right},${image_bottom}' ";
 
 # measured from the video frame
 $scrollbar_width = 9;
 $scrollbar_left = $image_right - $scrollbar_width;
-$command .= " -fill green -draw 'rectangle ${scrollbar_left},${image_top} ${image_right},${image_bottom}' ";
+$command .= " -fill grey -draw 'rectangle ${scrollbar_left},${image_top} ${image_right},${image_bottom}' ";
 
 $image_info = explode(':', preg_replace('|^.*<selector-boundaries>|s', '', $results));
 $viewport_width = $image_info[0];
