@@ -10,12 +10,24 @@ http://www.webpagetest.org/xmlResult/160301_W9_165/
 */
 
 // [selector-boundaries]
+
+// sergeychernyshev.com
+/*
 var selectors = [
    '#photo img',
    '#title',
    '.section:nth-child(4)',
    '.section a:nth-child(2) img'
 ];
+*/
+
+// howdoable.com
+var selectors = [
+  '.brand img',
+  'h1',
+  '.well',
+  '.offset2 h2'
+]
 
 var viewport_width = document.documentElement.clientWidth;
 
