@@ -1,6 +1,4 @@
-.PHONY: all mask frame clean
-
-FRAME=001100
+.PHONY: all mask frames clean
 
 TEST_FOLDER=results/${test}
 
@@ -8,7 +6,7 @@ FRAMES_FOLDER=${TEST_FOLDER}/frames
 MASKED_FOLDER=${TEST_FOLDER}/frames_masked
 
 REFERENCE=${TEST_FOLDER}/1_screen.jpg
-FRAME_FILE=ms_${FRAME}.png
+FRAME_FILE=ms_000000.png
 XMLRESULT=${TEST_FOLDER}/result.xml
 MASK=${TEST_FOLDER}/mask.png
 
@@ -16,7 +14,7 @@ all:
 ifndef	test
 	$(error You must specify a test ID as 'test' parameter: make test=160301_7K_YF7)
 else
-	${MAKE} ${TEST_FOLDER} mask frame
+	${MAKE} ${TEST_FOLDER} mask frames
 endif
 
 # Create test folder
