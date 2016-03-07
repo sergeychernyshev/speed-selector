@@ -12,6 +12,7 @@ http://www.webpagetest.org/xmlResult/160301_W9_165/
 // [selector-boundaries]
 
 // sergeychernyshev.com
+// [selector-boundaries]
 /*
 var selectors = [
    '#photo img',
@@ -22,11 +23,22 @@ var selectors = [
 */
 
 // howdoable.com
+// [selector-boundaries]
+/*
 var selectors = [
   '.brand img',
   'h1',
   '.well',
   '.offset2 h2'
+]
+*/
+
+// bedbathandbeyond.com
+// [selector-boundaries]
+var selectors = [
+  '#siteLogo img',
+  '#collegeBridalArea',
+  '#searchForm'
 ]
 
 var viewport_width = document.documentElement.clientWidth;

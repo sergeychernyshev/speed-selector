@@ -11,10 +11,10 @@ XMLRESULT=${TEST_FOLDER}/result.xml
 MASK=${TEST_FOLDER}/mask.png
 
 all:
-ifndef	test
+ifndef test
 	$(error You must specify a test ID as 'test' parameter: make test=160301_7K_YF7)
 else
-	${MAKE} ${TEST_FOLDER} mask frames
+	${MAKE} masked_metrics
 endif
 
 # Create test folder
@@ -34,18 +34,21 @@ ${TEST_FOLDER}/result.xml:
 ${REFERENCE}:
 	wget -q "http://www.webpagetest.org/getfile.php?test=${test}&file=1_screen.jpg" -O ${REFERENCE}
 
-mask: ${TEST_FOLDER}/result.xml ${REFERENCE} ${TEST_FOLDER}/video.mp4
+${MASK}: ${TEST_FOLDER}/result.xml ${REFERENCE} ${TEST_FOLDER}/video.mp4
 	php create_mask.php ${REFERENCE} ${FRAMES_FOLDER}/${FRAME_FILE} ${XMLRESULT} ${MASK}
 
 FRAMES := $(wildcard ${FRAMES_FOLDER}/*)
 MASKED_FRAMES := $(addprefix ${MASKED_FOLDER}/,$(notdir ${FRAMES}))
 
-frames:
-	mkdir -p ${MASKED_FOLDER}
-	${MAKE} ${MASKED_FRAMES}
-
 ${MASKED_FOLDER}/%: ${FRAMES_FOLDER}/%
-	composite ${MASK} $< $@
+	mkdir -p ${MASKED_FOLDER}
+	php composite_and_crop.php ${REFERENCE} $< ${MASK} $@
+
+${TEST_FOLDER}/masked.mp4: ${MASK} ${MASKED_FRAMES}
+	ffmpeg -f image2 -framerate 10 -pattern_type glob -i "${MASKED_FOLDER}/ms_*.png" -vcodec libx264 -pix_fmt yuv420p ${TEST_FOLDER}/masked.mp4
+
+masked_metrics: ${TEST_FOLDER} ${TEST_FOLDER}/masked.mp4
+	visualmetrics/visualmetrics.py -i ${TEST_FOLDER}/masked.mp4 -l -d ${MASKED_FOLDER}
 
 clean:
-	rm -rf ${FRAMES_FOLDER} ${MASK} ${MASKED_FOLDER}
+	rm -rf ${TEST_FOLDER}
