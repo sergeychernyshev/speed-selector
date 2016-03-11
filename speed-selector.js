@@ -22,31 +22,43 @@ var selectors = [
 ];
 */
 
-// howdoable.com
-// [selector-boundaries]
-/*
-var selectors = [
-  '.brand img',
-  'h1',
-  '.well',
-  '.offset2 h2'
-]
-*/
 
 // bedbathandbeyond.com
 // [selector-boundaries]
+/*
 var selectors = [
   '#siteLogo img',
   '#collegeBridalArea',
   '#searchForm'
 ]
+*/
 
-var viewport_width = document.documentElement.clientWidth;
+// howdoable.com
+// [selector-boundaries]
+var selectors = [
+  '.brand img, h1',
+  '.well',
+  '.offset2 h2'
+];
 
-var boundaries = viewport_width + ':';
-selectors.map(function(selector) {
-     var r = document.querySelector(selector).getBoundingClientRect();
-     boundaries += Math.round(r.left) + ',' + Math.round(r.top) + ',' + Math.round(r.right) + ',' + Math.round(r.bottom) + ';';
+var metric = {
+  viewport_width: document.documentElement.clientWidth,
+  boundaries: []
+};
+
+selectors.forEach(function(selector) {
+  var boxes = document.querySelectorAll(selector);
+  var count = boxes.length;
+
+  for (var i = 0; i < count; i++) {
+    var coords = boxes[i].getBoundingClientRect()
+    metric.boundaries.push({
+      left: coords.left,
+      top: coords.top,
+      right: coords.right,
+      bottom: coords.bottom
+    });
+  }
 });
 
-return boundaries;
+return JSON.stringify(metric);
