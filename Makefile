@@ -42,7 +42,7 @@ ${MASKED_FOLDER}/%: ${FRAMES_FOLDER}/%
 	composite ${MASK} $< $@
 
 ${TEST_FOLDER}/video.mp4: ${FRAMES_FOLDER}/${FRAME_FILE}
-	php avs_to_mp4.php ${TEST_FOLDER}/frames/video.avs ${TEST_FOLDER}/video.mp4
+	php avs_to_mp4.php ${TEST_FOLDER}/frames/video.avs ${TEST_FOLDER}/video.mp4 ${TEST_FOLDER}/video_diff.mp4
 
 masked_frames: ${MASK} ${MASKED_FRAMES}
 
