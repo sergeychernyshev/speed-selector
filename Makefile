@@ -13,7 +13,8 @@ all:
 ifndef test
 	$(error You must specify a test ID as 'test' parameter: make test=160301_7K_YF7)
 else
-	${MAKE} masked_frames
+	# ${MAKE} masked_frames
+	${MAKE} ${TEST_FOLDER}/video.mp4
 endif
 
 # Create test folder
@@ -39,6 +40,9 @@ MASKED_FRAMES := $(addprefix ${MASKED_FOLDER}/,$(notdir ${FRAMES}))
 ${MASKED_FOLDER}/%: ${FRAMES_FOLDER}/%
 	mkdir -p ${MASKED_FOLDER}
 	composite ${MASK} $< $@
+
+${TEST_FOLDER}/video.mp4: ${FRAMES_FOLDER}/${FRAME_FILE}
+	php avs_to_mp4.php ${TEST_FOLDER}/frames/video.avs ${TEST_FOLDER}/video.mp4
 
 masked_frames: ${MASK} ${MASKED_FRAMES}
 
