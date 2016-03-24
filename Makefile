@@ -1,4 +1,4 @@
-.PHONY: all mask frames clean
+.PHONY: all mask frames videos clean
 
 TEST_FOLDER=results/${test}
 
@@ -15,17 +15,17 @@ ifndef test
 	$(error You must specify a test ID as 'test' parameter: make test=160301_7K_YF7)
 else
 	# ${MAKE} masked_frames
-	${MAKE} ${TEST_FOLDER}/video.mp4 ${TEST_FOLDER}/diff_video.mp4
+	${MAKE} videos
 endif
 
+videos: ${TEST_FOLDER}/video.mp4 ${TEST_FOLDER}/diff_video.mp4
+
 # Download video frames
-${FRAMES_FOLDER}/video.avs:
+${FRAMES_FOLDER}/${FRAME_FILE}:
 	mkdir -p ${TEST_FOLDER}
 	wget "http://www.webpagetest.org/video/downloadFrames.php?test=${test}&run=1&cached=0" -O ${TEST_FOLDER}/frames.zip
 	mkdir -p ${FRAMES_FOLDER}
 	unzip -d ${FRAMES_FOLDER} ${TEST_FOLDER}/frames.zip
-
-${FRAMES_FOLDER}/${FRAME_FILE}: ${FRAMES_FOLDER}/video.avs
 
 # Download test results
 ${TEST_FOLDER}/result.xml: ${TEST_FOLDER}
@@ -42,10 +42,10 @@ ${MASKED_FOLDER}/%: ${FRAMES_FOLDER}/%
 	mkdir -p ${MASKED_FOLDER}
 	composite ${MASK} $< $@
 
-${TEST_FOLDER}/video.mp4: ${FRAMES_FOLDER}/video.avs
+${TEST_FOLDER}/video.mp4: ${FRAMES_FOLDER}/${FRAME_FILE}
 	php avs_to_mp4.php ${FRAMES_FOLDER}/video.avs ${FRAMES_FOLDER} ${TEST_FOLDER}/video.mp4
 
-${TEST_FOLDER}/diff_video.mp4: ${FRAMES_FOLDER}/video.avs
+${TEST_FOLDER}/diff_video.mp4: ${FRAMES_FOLDER}/${FRAME_FILE}
 	mkdir -p ${DIFFS_FOLDER}
 	php frame_diff.php ${FRAMES_FOLDER}/video.avs ${DIFFS_FOLDER}
 	php avs_to_mp4.php ${FRAMES_FOLDER}/video.avs ${DIFFS_FOLDER} ${TEST_FOLDER}/diff_video.mp4
