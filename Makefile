@@ -15,8 +15,7 @@ all:
 ifndef test
 	$(error You must specify a test ID as 'test' parameter: make test=160301_7K_YF7)
 else
-	# ${MAKE} masked_frames
-	${MAKE} videos
+	${MAKE} videos masked_metrics
 endif
 
 videos: ${TEST_FOLDER}/video.mp4 ${TEST_FOLDER}/diff_video.mp4 ${TEST_FOLDER}/diff_overlay_video.mp4
@@ -29,18 +28,18 @@ ${FRAMES_FOLDER}/${FRAME_FILE}:
 	unzip -d ${FRAMES_FOLDER} ${TEST_FOLDER}/frames.zip
 
 # Download test results
-${TEST_FOLDER}/result.xml: ${TEST_FOLDER}
+${TEST_FOLDER}/result.xml:
 	mkdir -p ${TEST_FOLDER}
 	wget -q "http://www.webpagetest.org/xmlResult/${test}/" -O ${TEST_FOLDER}/result.xml
 
 ${MASK}: ${TEST_FOLDER}/result.xml ${FRAMES_FOLDER}/${FRAME_FILE}
+	mkdir -p ${MASKED_FOLDER}
 	php create_mask.php ${FRAMES_FOLDER}/${FRAME_FILE} ${RESULT} ${MASK}
 
 FRAMES := $(wildcard ${FRAMES_FOLDER}/*.jpg)
 MASKED_FRAMES := $(addprefix ${MASKED_FOLDER}/,$(notdir ${FRAMES}))
 
 ${MASKED_FOLDER}/%: ${FRAMES_FOLDER}/%
-	mkdir -p ${MASKED_FOLDER}
 	composite ${MASK} $< $@
 
 ${TEST_FOLDER}/video.mp4: ${FRAMES_FOLDER}/${FRAME_FILE}
@@ -58,12 +57,12 @@ ${TEST_FOLDER}/diff_overlay_video.mp4: ${TEST_FOLDER}/diff_video.mp4
 
 masked_frames: ${MASK} ${MASKED_FRAMES}
 
-#${TEST_FOLDER}/masked.mp4: ${MASK} ${MASKED_FRAMES}
-#	ffmpeg -f image2 -framerate 20 -pattern_type glob -i "${MASKED_FOLDER}/frame_*.jpg" -vcodec libx264 -pix_fmt yuv420p ${TEST_FOLDER}/masked.mp4
+${TEST_FOLDER}/masked.mp4: ${MASK} ${MASKED_FRAMES}
+	php avs_to_mp4.php ${FRAMES_FOLDER}/video.avs ${MASKED_FOLDER} ${TEST_FOLDER}/masked.mp4
 
-#masked_metrics: ${TEST_FOLDER}/masked.mp4
-#	mkdir -p ${TEST_FOLDER}
-#	visualmetrics/visualmetrics.py -i ${TEST_FOLDER}/masked.mp4 -l
+masked_metrics: ${TEST_FOLDER}/masked.mp4
+	mkdir -p ${TEST_FOLDER}
+	visualmetrics/visualmetrics.py -i ${TEST_FOLDER}/masked.mp4 -l
 
 clean:
 	rm -rf ${TEST_FOLDER}

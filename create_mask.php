@@ -1,4 +1,7 @@
 <?php
+/**
+ * Creates a mask based on original frame size and data from speed slector custom metric
+ */
 
 // video frame file to get measurements from
 $video_frame = $argv[1];
@@ -6,17 +9,13 @@ $video_frame = $argv[1];
 $results = file_get_contents($argv[2]);
 $mask = $argv[3];
 
+// calculating mask dimentions based on original frame size
 $image_size = getimagesize($video_frame);
 $image_width = $image_size[0];
 $image_height = $image_size[1];
 
 # create mask frame
 $command = "convert -size ${image_width}x${image_height} xc:white ";
-
-# measured from the video frame
-$scrollbar_width = 9;
-$scrollbar_left = $image_width - $scrollbar_width;
-$command .= " -fill grey -draw 'rectangle ${scrollbar_left},0 ${image_width},${image_height}' ";
 
 // extracting JSON-encoded value from XML
 $metric_value = preg_replace('|^.*<selector-boundaries>|s', '', $results);
@@ -26,7 +25,11 @@ $metric_value = html_entity_decode(html_entity_decode($metric_value));
 // decoding JSON payload
 $image_info = json_decode($metric_value, true);
 $viewport_width = $image_info['viewport_width'];
-$scale = ($image_width - $scrollbar_width) / $viewport_width;
+$scrollbar_width = $image_info['scrollbar_width'];
+$scale = $image_width / ($viewport_width + $scrollbar_width);
+
+$scrollbar_left = $image_width - $scrollbar_width * $scale;
+$command .= " -fill grey -draw 'rectangle ${scrollbar_left},0 ${image_width},${image_height}' ";
 
 $boundaries = array_map(function ($box) {
   global $scale;
