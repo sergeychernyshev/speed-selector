@@ -2,20 +2,20 @@
 /**
  * Overlays diff images over corresponding video frames
  *
- * Usage: php diff_overlay.php /path/to/video.avs /path/to/diffs_folder/ /path/to/output_overlay_folder/
+ * Usage: php diff_overlay.php /path/to/frames/video.avs /path/to/frames/ /path/to/diffs_folder/ /path/to/output_overlay_folder/
  */
 
 // a file with Avisynth script
 $avs = $argv[1];
 
 // base path to frame files
-$frame_directory = dirname($avs);
+$frame_directory = $argv[2];
 
 // directory of diff frames
-$diff_directory = $argv[2];
+$diff_directory = $argv[3];
 
 // directory of output overlayed frames
-$overlay_directory = $argv[3];
+$overlay_directory = $argv[4];
 
 // Frame entries in the format like the following
 // ImageSource("frame_0000.jpg", start = 1, end = 16, fps = 10)
