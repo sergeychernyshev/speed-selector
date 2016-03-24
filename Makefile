@@ -4,6 +4,7 @@ TEST_FOLDER=results/${test}
 
 FRAMES_FOLDER=${TEST_FOLDER}/frames
 DIFFS_FOLDER=${TEST_FOLDER}/frames_diff
+OVERLAY_FOLDER=${TEST_FOLDER}/frames_overlay
 MASKED_FOLDER=${TEST_FOLDER}/frames_masked
 
 FRAME_FILE=frame_0000.jpg
@@ -18,7 +19,7 @@ else
 	${MAKE} videos
 endif
 
-videos: ${TEST_FOLDER}/video.mp4 ${TEST_FOLDER}/diff_video.mp4
+videos: ${TEST_FOLDER}/video.mp4 ${TEST_FOLDER}/diff_video.mp4 ${TEST_FOLDER}/diff_overlay_video.mp4
 
 # Download video frames
 ${FRAMES_FOLDER}/${FRAME_FILE}:
@@ -45,10 +46,15 @@ ${MASKED_FOLDER}/%: ${FRAMES_FOLDER}/%
 ${TEST_FOLDER}/video.mp4: ${FRAMES_FOLDER}/${FRAME_FILE}
 	php avs_to_mp4.php ${FRAMES_FOLDER}/video.avs ${FRAMES_FOLDER} ${TEST_FOLDER}/video.mp4
 
-${TEST_FOLDER}/diff_video.mp4: ${FRAMES_FOLDER}/${FRAME_FILE}
+${TEST_FOLDER}/diff_video.mp4: ${TEST_FOLDER}/video.mp4
 	mkdir -p ${DIFFS_FOLDER}
 	php frame_diff.php ${FRAMES_FOLDER}/video.avs ${DIFFS_FOLDER}
 	php avs_to_mp4.php ${FRAMES_FOLDER}/video.avs ${DIFFS_FOLDER} ${TEST_FOLDER}/diff_video.mp4
+
+${TEST_FOLDER}/diff_overlay_video.mp4: ${TEST_FOLDER}/diff_video.mp4
+	mkdir -p ${OVERLAY_FOLDER}
+	php diff_overlay.php ${FRAMES_FOLDER}/video.avs ${DIFFS_FOLDER} ${OVERLAY_FOLDER}
+	php avs_to_mp4.php ${FRAMES_FOLDER}/video.avs ${OVERLAY_FOLDER} ${TEST_FOLDER}/diff_overlay_video.mp4
 
 masked_frames: ${MASK} ${MASKED_FRAMES}
 
