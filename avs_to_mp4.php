@@ -37,7 +37,7 @@ foreach ($frames as $frame) {
 
     // generate video chunks for each frame
     $video_filename = preg_replace('/\..*$/', '.mp4', $filename);
-    passthru("ffmpeg -y -loop 1 -r 10 -f image2 -i \"${frame_directory}/{$filename}\" -t ${duration} -vcodec libx264 -pix_fmt yuv420p ${frame_directory}/${video_filename}\n");
+    passthru("ffmpeg -y -loop 1 -r 10 -f image2 -i \"${frame_directory}/{$filename}\" -t ${duration} -vcodec libx264 -pix_fmt yuv420p -vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\" ${frame_directory}/${video_filename}\n");
 
     $video_files[] = "file '${video_filename}'";
 }
