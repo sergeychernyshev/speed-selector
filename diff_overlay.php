@@ -30,5 +30,5 @@ foreach ($frames as $frame) {
 
     passthru("convert -negate ${diff_directory}/${filename} ${overlay_directory}/${filename}");
 
-    passthru("composite -blend 70 ${overlay_directory}/${filename} ${frame_directory}/${filename} ${overlay_directory}/${filename}");
+    passthru("composite -blend 50 ${overlay_directory}/${filename} ${frame_directory}/${filename} ${overlay_directory}/${filename}");
 }

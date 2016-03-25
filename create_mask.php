@@ -28,8 +28,8 @@ $viewport_width = $image_info['viewport_width'];
 $scrollbar_width = $image_info['scrollbar_width'];
 $scale = $image_width / ($viewport_width + $scrollbar_width);
 
-$scrollbar_left = $image_width - $scrollbar_width * $scale;
-$command .= " -fill grey -draw 'rectangle ${scrollbar_left},0 ${image_width},${image_height}' ";
+#$scrollbar_left = $image_width - $scrollbar_width * $scale;
+#$command .= " -fill grey -draw 'rectangle ${scrollbar_left},0 ${image_width},${image_height}' ";
 
 $boundaries = array_map(function ($box) {
   global $scale;

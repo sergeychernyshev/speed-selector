@@ -7,6 +7,8 @@ OVERLAY_FOLDER=${TEST_FOLDER}/frames_overlay
 MASKED_FOLDER=${TEST_FOLDER}/frames_masked
 MASKED_DIFF_FOLDER=${TEST_FOLDER}/frames_masked_diff
 MASKED_OVERLAY_FOLDER=${TEST_FOLDER}/frames_masked_overlay
+MASKED_OVER_ORIGINAL_FOLDER=${TEST_FOLDER}/frames_masked_over_original
+MASKED_DIFF_OVER_ORIGINAL_FOLDER=${TEST_FOLDER}/frames_masked_diff_over_original
 
 FRAME_FILE=frame_0000.jpg
 AVS=${FRAMES_FOLDER}/video.avs
@@ -20,7 +22,7 @@ else
 	${MAKE} videos masked_metrics
 endif
 
-videos: ${TEST_FOLDER}/diff_overlay_video.mp4 ${TEST_FOLDER}/masked_diff_overlay_video.mp4
+videos: ${TEST_FOLDER}/diff_over_original.mp4 ${TEST_FOLDER}/masked_diff_over_original.mp4 ${TEST_FOLDER}/masked_diff_over_masked.mp4 ${TEST_FOLDER}/masked_over_original.mp4
 
 # Download video frames
 ${FRAMES_FOLDER}/${FRAME_FILE}:
@@ -53,7 +55,7 @@ ${MASK}: ${TEST_FOLDER}/result.xml ${FRAMES_FOLDER}/${FRAME_FILE}
 
 ${TEST_FOLDER}/masked.mp4: ${MASK} ${TEST_FOLDER}/original.mp4
 	mkdir -p ${MASKED_FOLDER}
-	php apply_mask.php ${AVS} ${MASK} ${FRAMES_FOLDER} ${MASKED_FOLDER}
+	php apply_mask.php ${AVS} 1 ${MASK} ${FRAMES_FOLDER} ${MASKED_FOLDER}
 	php avs_to_mp4.php ${AVS} ${MASKED_FOLDER} ${TEST_FOLDER}/masked.mp4
 
 ${TEST_FOLDER}/masked_diff.mp4: ${TEST_FOLDER}/masked.mp4
@@ -65,6 +67,16 @@ ${TEST_FOLDER}/masked_diff_over_masked.mp4: ${TEST_FOLDER}/masked_diff.mp4
 	mkdir -p ${MASKED_OVERLAY_FOLDER}
 	php diff_overlay.php ${AVS} ${MASKED_FOLDER} ${MASKED_DIFF_FOLDER} ${MASKED_OVERLAY_FOLDER}
 	php avs_to_mp4.php ${AVS} ${MASKED_OVERLAY_FOLDER} ${TEST_FOLDER}/masked_diff_over_masked.mp4
+
+${TEST_FOLDER}/masked_over_original.mp4: ${TEST_FOLDER}/masked_diff.mp4
+	mkdir -p ${MASKED_OVER_ORIGINAL_FOLDER}
+	php apply_mask.php ${AVS} 0.7 ${MASK} ${FRAMES_FOLDER} ${MASKED_OVER_ORIGINAL_FOLDER}
+	php avs_to_mp4.php ${AVS} ${MASKED_OVER_ORIGINAL_FOLDER} ${TEST_FOLDER}/masked_over_original.mp4
+
+${TEST_FOLDER}/masked_diff_over_original.mp4: ${TEST_FOLDER}/masked_over_original.mp4
+	mkdir -p ${MASKED_DIFF_OVER_ORIGINAL_FOLDER}
+	php diff_overlay.php ${AVS} ${MASKED_OVER_ORIGINAL_FOLDER} ${MASKED_DIFF_FOLDER} ${MASKED_DIFF_OVER_ORIGINAL_FOLDER}
+	php avs_to_mp4.php ${AVS} ${MASKED_DIFF_OVER_ORIGINAL_FOLDER} ${TEST_FOLDER}/masked_diff_over_original.mp4
 
 masked_metrics: ${TEST_FOLDER}/masked.mp4
 	visualmetrics/visualmetrics.py -i ${TEST_FOLDER}/masked.mp4
