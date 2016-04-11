@@ -10,6 +10,8 @@ MASKED_OVERLAY_FOLDER=${TEST_FOLDER}/frames_masked_overlay
 MASKED_OVER_ORIGINAL_FOLDER=${TEST_FOLDER}/frames_masked_over_original
 MASKED_DIFF_OVER_ORIGINAL_FOLDER=${TEST_FOLDER}/frames_masked_diff_over_original
 
+MASKS_FOLDER=${TEST_FOLDER}/masks
+
 FRAME_FILE=frame_0000.jpg
 AVS=${FRAMES_FOLDER}/video.avs
 RESULT=${TEST_FOLDER}/result.xml
@@ -19,10 +21,11 @@ all:
 ifndef test
 	$(error You must specify a test ID as 'test' parameter: make test=160301_7K_YF7)
 else
-	${MAKE} videos masked_metrics
+	#${MAKE} videos masked_metrics
+	${MAKE} ${TEST_FOLDER}/original.mp4 ${TEST_FOLDER}/diff.mp4 ${TEST_FOLDER}/diff_over_original.mp4
 endif
 
-videos: ${TEST_FOLDER}/diff_over_original.mp4 ${TEST_FOLDER}/masked_diff_over_original.mp4 ${TEST_FOLDER}/masked_diff_over_masked.mp4 ${TEST_FOLDER}/masked_over_original.mp4
+videos: ${TEST_FOLDER}/masked_diff_over_original.mp4 ${TEST_FOLDER}/masked_diff_over_masked.mp4 ${TEST_FOLDER}/masked_over_original.mp4
 
 # Download video frames
 ${FRAMES_FOLDER}/${FRAME_FILE}:
@@ -50,8 +53,9 @@ ${TEST_FOLDER}/result.xml:
 	mkdir -p ${TEST_FOLDER}
 	wget -q "http://www.webpagetest.org/xmlResult/${test}/" -O ${TEST_FOLDER}/result.xml
 
-${MASK}: ${TEST_FOLDER}/result.xml ${FRAMES_FOLDER}/${FRAME_FILE}
-	php create_mask.php ${FRAMES_FOLDER}/${FRAME_FILE} ${RESULT} ${MASK}
+masks: ${TEST_FOLDER}/result.xml ${FRAMES_FOLDER}/${FRAME_FILE}
+	mkdir -p ${MASKS_FOLDER}
+	php create_masks.php ${FRAMES_FOLDER}/${FRAME_FILE} ${RESULT} ${MASKS_FOLDER}
 
 ${TEST_FOLDER}/masked.mp4: ${MASK} ${TEST_FOLDER}/original.mp4
 	mkdir -p ${MASKED_FOLDER}
