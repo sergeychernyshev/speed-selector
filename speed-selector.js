@@ -1,5 +1,5 @@
 /*
-http://www.webpagetest.org/?iq=80
+http://www.webpagetest.org/?iq=100
 
 Script:
 setViewportSize 1280 1024
