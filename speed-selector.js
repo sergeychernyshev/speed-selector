@@ -87,17 +87,6 @@ var selectors = [
 ];
 */
 
-
-// bedbathandbeyond.com
-// [selector-boundaries]
-/*
-var selectors = [
-  '#siteLogo img',
-  '#collegeBridalArea',
-  '#searchForm'
-]
-*/
-
 // cnn.com
 return selector_boundaries([{
     slug: 'basic',
